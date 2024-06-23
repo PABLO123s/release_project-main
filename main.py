@@ -8,12 +8,18 @@ food_size = 10
 delay = 100
 SIZE   = (WIDTH, HEIGHT)
 FPS = 60
+score = 0
 
 window = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 background = pygame.transform.scale(
                                     pygame.image.load("test_background.png"),
                                     SIZE)
+
+pygame.font.init()
+font_big = pygame.font.Font(None, 70)
+font_medium = pygame.font.Font(None, 35)
+font_small = pygame.font.Font(None, 15)
 
 class GameSprite(pygame.sprite.Sprite):
     def __init__(self, filename, size, coords):
@@ -27,7 +33,17 @@ class GameSprite(pygame.sprite.Sprite):
 
 class Food(GameSprite):
     def update(self):
-        ...
+        self.rect.x = random.randint(20, 600)
+        self.rect.y = random.randint(20, 600)
+        global score 
+        score += 1
+
+class Enemy(GameSprite):
+     def update(self):
+          self.rect.x = random.randint(20, 600)
+          self.rect.y = random.randint(20, 600)
+          global score
+          score -= 1
 
 class Player(GameSprite):
     def update(self):
@@ -46,6 +62,7 @@ class Player(GameSprite):
 player = Player("test_image.png", (100,100), (100,100))
 food = Food("test_food.png", (100,100), (random.randint(20, 600),random.randint(20, 600)))
 
+
 game_over = False
 while not game_over:
     for event in pygame.event.get():
@@ -55,6 +72,8 @@ while not game_over:
     player.reset()
     player.update()
     food.reset()
+    text_score = font_medium.render("Рахунок:" + str(score), True, (0,0,255))
+    window.blit(text_score, (0,0))
     if pygame.sprite.collide_rect(food, player): 
         food.update()
     pygame.display.update()
